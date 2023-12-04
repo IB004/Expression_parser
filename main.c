@@ -25,7 +25,7 @@ DEFINE_RING_PRINT(token, token_print)
 
 #define RETURN_ERROR(code, msg) return printf(msg), code
 
-static const int PRIORITY[] = {
+const int PRIORITY[] = {
     [TOK_PLUS] = 1, 
     [TOK_MINUS] = 1, 
     [TOK_MUL] = 5, 
@@ -38,7 +38,7 @@ static const int PRIORITY[] = {
     [TOK_ERROR] = 100
 };
  
-static const int TOKEN_TO_AST[] = {
+const int TOKEN_TO_AST[] = {
     [TOK_PLUS] = BIN_PLUS, 
     [TOK_MINUS] = BIN_MINUS, 
     [TOK_MUL] = BIN_MUL, 
@@ -46,16 +46,16 @@ static const int TOKEN_TO_AST[] = {
     [TOK_NEG] = UN_NEG
 };
 
-static int token_is_unop(struct token token){
-	return (token.type == TOK_NEG);
-}
-
-static void exit_error(int code, char* msg){
+void exit_error(int code, char* msg){
 	fprintf(stderr, "%s \n", msg);
 	exit(code);
 }
 
-static void exec_top(struct ring_oper* opers, struct ring_ast* asts){
+int token_is_unop(struct token token){
+	return (token.type == TOK_NEG);
+}
+
+void exec_top(struct ring_oper* opers, struct ring_ast* asts){
 	struct token top = ring_oper_pop(&opers);
 	struct AST* new;
 	if (token_is_unop(top)){
@@ -82,7 +82,7 @@ void exec_until(enum token_type const end_type, struct ring_oper* opers, struct 
   }
 }
 
-static void process_one_token(struct token next, struct ring_oper* opers, struct ring_ast* asts){
+void process_one_token(struct token next, struct ring_oper* opers, struct ring_ast* asts){
 	struct token top = ring_oper_last(opers);
 	if(next.type == TOK_LIT){
 		ring_ast_push(&asts, lit(next.value));
